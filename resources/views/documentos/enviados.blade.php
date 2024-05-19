@@ -4,7 +4,7 @@
        <div class="row justify-content-center">
            <div class="col-12">
             @if ($documentosEnviados->isEmpty())
-               <p> <a href="{{route(documentos.index)}}">Clique aqui para enviar um documento</a></p>
+               <p class="mt-3"> <a href="{{route('documentos.index')}}">Clique aqui para enviar um documento</a></p>
             @else
              <div class="table-responsive bg-white">
                <table class="table mb-0">
@@ -12,7 +12,7 @@
                    <tr>
                      <th scope="col"> Título </th>
                      <th scope="col"> Enviado para </th>
-                     <th scope="col"> Data de Recebimento </th>
+                     <th scope="col"> Data de Envio </th>
                      <th scope="col"> Processo </th>
                      <th scope="col"> + Detalhes</th>
                    </tr>

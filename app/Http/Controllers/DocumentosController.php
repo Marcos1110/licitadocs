@@ -33,6 +33,7 @@ class DocumentosController extends Controller
         ]);
 
         if ($request->hasFile('arquivo')) {
+            
             $file = $request->file('arquivo');
             $filename = time() . '_' . $file->getClientOriginalName();
 
@@ -54,14 +55,19 @@ class DocumentosController extends Controller
             $documento->destinatario = $request->input('destinatario');
             $documento->save();
 
-            $destinatario = User::find($documento->destinatario);
-            $remetente = User::find($documento->remetente);
-
-            $destinatario->notify(new ReceivedDocumentNotification($documento, $destinatario, $remetente));
+            $this->notificarDesinatario($documento);
 
             return back()->with('success', 'Arquivo enviado com sucesso!')->with('path', $path);
         }
         return back()->with('error', 'Erro ao enviar o arquivo.');
+    }
+
+    public function notificarDesinatario($documento){
+
+        $destinatario = User::find($documento->destinatario);
+        $remetente = User::find($documento->remetente);
+
+        $destinatario->notify(new ReceivedDocumentNotification($documento, $destinatario, $remetente));
     }
 
     public function viewer($id){

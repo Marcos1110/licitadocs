@@ -74,7 +74,9 @@ class SignController extends Controller
             $documento->arquivo = 'public/documentos/documento_assinado_' . $documento->id . '.pdf';
             $documento->save();
 
-           $remetente = User::find($documento->remetente);
+            $this->retornarDocumento($documento);
+
+            $remetente = User::find($documento->remetente);
 
             $remetente->notify(new SignedDocumentNotification($documento, $remetente));
     
@@ -84,4 +86,17 @@ class SignController extends Controller
         }
     }
     
+    public function retornarDocumento($documentoAssinado){
+        $documento = new Documento();
+        $documento->titulo = $documentoAssinado->titulo . '(Assinado)';
+        $documento->descricao = 'Seu documento foi assinado.';
+        $documento->tipo = $documentoAssinado->tipo;
+        $documento->processo = $documentoAssinado->processo; 
+        $documento->precisaAssinar = false;
+        $documento->assinado = true;
+        $documento->arquivo =$documentoAssinado->arquivo;
+        $documento->remetente = $documentoAssinado->destinatario;;
+        $documento->destinatario = $documentoAssinado->remetente;
+        $documento->save();
+    }
 }

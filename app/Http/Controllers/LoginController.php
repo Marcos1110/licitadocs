@@ -29,7 +29,7 @@ class LoginController extends Controller
         $authenticated = Auth::attempt($credentials);
 
         if(!$authenticated) {
-            return redirect() -> route('login.index') -> withErrors(['error' => "Email ou Senha inválidos"]);
+            return redirect() -> route('login') -> withErrors(['error' => "Email ou Senha inválidos"]);
         }
 
         return redirect() -> route('user.dashboard') -> with(['success' => 'Logged in']);
