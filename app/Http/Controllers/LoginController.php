@@ -10,7 +10,7 @@ class LoginController extends Controller
     public function index()
     {
         # Chama o formulário de login
-        return view('login');
+        return view('autenticacao.login');
     }
 
     public function store(Request $request)
@@ -32,7 +32,7 @@ class LoginController extends Controller
             return redirect() -> route('login') -> withErrors(['error' => "Email ou Senha inválidos"]);
         }
 
-        return redirect() -> route('user.dashboard') -> with(['success' => 'Logged in']);
+        return redirect() -> route('usuario.dashboard') -> with(['success' => 'Logged in']);
     }
 
     public function destroy()

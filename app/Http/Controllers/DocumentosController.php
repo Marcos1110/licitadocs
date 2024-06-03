@@ -17,12 +17,12 @@ class DocumentosController extends Controller
     public function index(){
       # Mostra a view do formulário para upload de arquivos
       # Carrega os usuários(exceto o atual), tipos e processos para serem mostrados nos campos do formulário. 
-      $usuarios = User::where('id', '!=', Auth::id())->get();
+      $destinatarios = User::where('id', '!=', Auth::id())->get();
       $tiposDocumento = TiposDocumento::all();
       $processos = Processo::all();
 
-      
-      return view('documentos.uploadForm', compact('usuarios', 'tiposDocumento', 'processos'));
+
+      return view('documentos.uploadForm', compact('destinatarios', 'tiposDocumento', 'processos'));
   }
 
     public function store(Request $request)

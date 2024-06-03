@@ -18,7 +18,7 @@ export default defineConfig({
             '~bootstrap': path.resolve(__dirname,"node_modules/bootstrap/dist")
         }
     },
-    server: {
-        https: true,  // Adiciona esta linha para configurar o servidor para HTTPS
-    },
+    /*server: {
+       https: true,
+    },*/
 });

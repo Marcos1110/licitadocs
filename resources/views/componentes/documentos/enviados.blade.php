@@ -3,43 +3,44 @@
     <div class="container">
       <div class="row justify-content-center">
           <div class="col-12">
-            @if ($documentosRecebidos->isEmpty())
-               <p class="mt-3"> Você ainda não recebeu nenhum documento... </p>
+            @if ($documentosEnviados->isEmpty())
+               <p class="mt-3"> Nenhum arquivo enviado... </p>
             @else
               <div class="table-responsive bg-white">
-                <table class="table mb-0">
+                <table class="table mb-0 table-dark">
                   <thead>
                     <tr>
                       <th scope="col"> Título </th>
-                      <th scope="col"> Enviado por </th>
+                      <th scope="col"> Enviado para </th>
                       <th scope="col"> Data de Recebimento </th>
                       <th scope="col"> Processo </th>
-                      <th scope="col"> + Detalhes</th>
+                      <th scope="col"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach ($documentosRecebidos as $documento)
+                    @foreach ($documentosEnviados as $documento)
                       <tr>
                           <td> {{ $documento->titulo }} </td>
                           <td>
                             <?php 
-                            $remetente = App\Models\User::find($documento->remetente);
-                            if($remetente) {
-                                echo $remetente->name;
+                            $destinatario = App\Models\User::find($documento->destinatario);
+                            if($destinatario) {
+                                echo $destinatario->name;
                             }
                             ?>
                           </td>
-                          <td> {{ $documento->created_at->format('d/m/Y H:i:s') }} </td>
+                          <td> {{ $documento->created_at->format('d/m/Y H:i:s') }}  </td>
                           <td> 
                             <?php 
                               $processo = App\Models\Processo::find($documento->processo);
                               if($processo) {
                                 $modalidade = App\Models\Modalidade::find($processo->modalidade);
-                                echo "$modalidade->desc" . " " . "$processo->numero";
+                                echo "$modalidade->desc" . " - "; 
                               }
-                            ?>
+                              echo str_pad($processo->numero, 3, '0', STR_PAD_LEFT);
+                            ?>.{{ $processo->ano }}
                           </td>
-                          <td> <a href="{{ route('documentos.viewer', $documento->id) }}">Detalhes</a> </td>
+                          <td> <a href="{{ route('documento.viewer', $documento->id) }}">Detalhes</a> </td>
                       </tr>
                     @endforeach
                   </tbody>

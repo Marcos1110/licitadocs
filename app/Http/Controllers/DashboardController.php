@@ -9,6 +9,6 @@ class DashboardController extends Controller
         # Mostra a view do Dashboard
         $documentosRecebidos = Documento::where('destinatario', auth()->user()->id)->get();
         $documentosEnviados = Documento::where('remetente', auth()->user()->id)->get();
-        return view('dashboard',['documentosEnviados' => $documentosEnviados], ['documentosRecebidos' => $documentosRecebidos]);
+        return view('usuario.dashboard',['documentosEnviados' => $documentosEnviados], ['documentosRecebidos' => $documentosRecebidos]);
     }
 }

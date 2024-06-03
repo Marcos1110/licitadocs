@@ -23,6 +23,7 @@ class User extends Authenticatable
         'department',
         'role',
         'email',
+        'is_admin',
         'phone',
         'cpf',
         'password',
