@@ -4,20 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Processo extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['objeto'];
-
-    public function documentos()
+    protected $fillable = [
+        'numero',
+        'modalidade',
+        'objeto'
+    ];
+    
+    # Relacionamentos
+    public function modalidade(): BelongsTo
+    {
+        return $this->belongsTo(Modalidade::class);
+    }
+    
+    public function documento(): HasMany
     {
         return $this->hasMany(Documento::class);
-    }
-
-    public function modalidade()
-    {
-        return $this->belongsTo(Modalidade::class, 'modalidade');
     }
 }

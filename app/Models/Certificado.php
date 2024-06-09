@@ -4,20 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Token extends Model
+
+class Certificado extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'usuario',
-        'certificado',
+        'arquivo',
         'senha',
     ];
-
-    public function user()
+    
+    # Relacionamentos
+    public function usuario(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'usuario');
+        return $this->belongsTo(User::class);
     }
 
     

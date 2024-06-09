@@ -52,9 +52,9 @@ class ReceivedDocumentNotification extends Notification
         return (new MailMessage)
                     ->subject('Você recebeu um novo documento')
                     ->greeting('Olá ' . $this->destinatario->name)
-                    ->line('Você recebe o documento ' . $this->documento->titulo . ' de ' . $this->remetente->name)
+                    ->line('Você recebeu o documento ' . $this->documento->titulo . ' de ' . $this->remetente->name)
                     ->line('Acesse a plataforma para visualizar: ')
-                    ->action('Ir para Licitadocs', url('/login'))
+                    ->action('Ir para Licitadocs', url('/'))
                     ->salutation('Agradecemos sua atenção,')
                     ->line('Atenciosamente, Equipe Licitadocs!');
     }

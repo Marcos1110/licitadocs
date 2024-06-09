@@ -1,14 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Documento;
 
 class DashboardController extends Controller
 {
     public function index() {
-        # Mostra a view do Dashboard
-        $documentosRecebidos = Documento::where('destinatario', auth()->user()->id)->get();
-        $documentosEnviados = Documento::where('remetente', auth()->user()->id)->get();
-        return view('usuario.dashboard',['documentosEnviados' => $documentosEnviados], ['documentosRecebidos' => $documentosRecebidos]);
+        $documentos = Documento::where('responsavel', Auth::user()->id)->get();
+       
+        return view('usuario.dashboard', compact('documentos'));
     }
 }

@@ -1,28 +1,36 @@
 @extends('master')
 
+@section('titulo') Dashboard @endsection
+
 @section('content')
-   <!-- Barra de Navegação -->
    @include('componentes.navbar')
-   <main>
-      <div class="container mt-5 pt-3">
-          <ul class="nav nav-tabs">
-            <li class="nav-item">
-               <a class="nav-link active" data-bs-toggle="tab" href="#recebidos">Documentos Recebidos</a>
-            </li>
-            <li class="nav-item">
-               <a class="nav-link" data-bs-toggle="tab" href="#enviados">Documentos Enviados</a>
-            </li>
-          </ul>
-  
-          <!-- Tab panes -->
-          <div class="tab-content">
-            <div class="tab-pane container active" id="recebidos">
-               @include('componentes.documentos.recebidos')
-            </div>
-            <div class="tab-pane container fade" id="enviados">
-               @include('componentes.documentos.enviados')
-            </div>
-          </div>
-      </div>
-  </main>
+   
+   <div class="text-center py-3 mb-4 border-bottom">
+         <h2> Bem-vindo(a) {{ auth()->user()->name }} </h2>
+         <h4> Seus Documentos </h4>
+    </div>
+    <div class="table-responsive container-table">
+        <table class="table table-striped 
+                    table-bordered table-hover custom-table">
+            <thead>
+                <tr>
+                    <th>Index</th>
+                    <th>Titulo</th>
+                    <th>Criado em</th>
+                    <th>Mais Detalhes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($documentos as $documento)
+                    <tr>
+                    <td> {{ $documento->id }} </td>
+                    <td> {{ $documento->titulo }} </td>
+                    <td> {{ $documento->created_at->format('d/m/Y H:i:s') }} </td>
+                    <td><a href="{{ route('documento.visualizar', ['id' => $documento->id]) }}">Visualizar</a></td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        </table>
+    </div>
 @endsection

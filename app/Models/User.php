@@ -3,8 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Token;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
@@ -20,39 +22,46 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'department',
-        'role',
         'email',
-        'is_admin',
-        'phone',
+        'telefone',
         'cpf',
         'password',
+        'cargo',
+        'administrador'
     ];
-
-    public function token()
+    
+    # Relacionamentos
+    public function cargo(): BelongsTo
     {
-        return $this->hasOne(Token::class, 'usuario');
-    }
-
-    public function role()
-    {
-        return $this->belongsTo(Role::class, 'role');
+        return $this->belongsTo(Cargo::class);
     }
     
-    public function department()
+    public function certificado(): HasOne
     {
-        return $this->belongsTo(Department::class, 'department');
+        return $this->hasOne(Certificado::class);
+    }
+    
+    public function documento(): HasMany
+    {
+        return $this->hasMany(Documento::class);
+    }
+    
+    public function envio(): HasMany
+    {
+        return $this->hasMany(Envio::class);
+    }
+    
+    public function log(): HasMany
+    {
+        return $this->hasMany(Log::class);
     }
 
     /**
      * Route notifications for the Vonage channel.
      */
-    public function routeNotificationForVonage(Notification $notification): string
+    public function routeNotificationForVonage(): string
     {
-        //$phone = $notification->remetente->phone;
 
-        return $this->phone;
+        return $this->telefone;
     }
-
-    
 }

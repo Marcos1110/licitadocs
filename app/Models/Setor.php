@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Modalidade extends Model
+class Setor extends Model
 {
     use HasFactory;
 
@@ -15,8 +15,8 @@ class Modalidade extends Model
     ];
     
     # Relacionamentos
-    public function processo(): HasMany
+    public function cargo(): HasMany
     {
-        return $this->hasMany(Processo::class);
+        return $this->hasMany(Cargo::class);
     }
 }

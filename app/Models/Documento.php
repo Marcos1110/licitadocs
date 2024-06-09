@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Documento extends Model
 {
@@ -12,24 +14,30 @@ class Documento extends Model
     protected $fillable = [
         'titulo',
         'descricao',
-        'tipo',
+        'responsavel',
         'processo',
-        'precisaAssinar',
-        'assinado',
-        'remetente',
-        'destinatario',
         'arquivo'
     ];
-
-    // Relacionamento Documento pertence a um Tipo
-    public function tipo()
+    
+    # Relacionamentos
+    public function responsavel(): BelongsTo
     {
-        return $this->belongsTo(TiposDocumento::class);
+        return $this->belongsTo(User::class);
     }
-
-    // Relacionamento Documento pertence a um Processo
-    public function processo()
+    
+    public function processo(): BelongsTo
     {
         return $this->belongsTo(Processo::class);
     }
+    
+    public function envio(): HasMany
+    {
+        return $this->hasMany(Envio::class);
+    }
+    
+    public function log(): HasMany
+    {
+        return $this->hasMany(Log::class);
+    }
+    
 }

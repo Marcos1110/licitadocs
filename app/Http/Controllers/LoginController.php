@@ -32,7 +32,7 @@ class LoginController extends Controller
             return redirect() -> route('login') -> withErrors(['error' => "Email ou Senha inválidos"]);
         }
 
-        return redirect() -> route('usuario.dashboard') -> with(['success' => 'Logged in']);
+        return redirect() -> route('usuario.dashboard');
     }
 
     public function destroy()

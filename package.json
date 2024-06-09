@@ -10,10 +10,11 @@
         "axios": "^1.6.4",
         "jquery": "^3.7.1",
         "laravel-vite-plugin": "^1.0",
-        "pdfjs-dist": "^4.2.67",
+        "pdfjs-dist": "^2.5.207",
         "vite": "^5.0"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-free": "^6.5.2",
         "bootstrap": "^5.3.3",
         "jquerry": "^0.0.1-security",
         "pdfjs": "^2.5.3",

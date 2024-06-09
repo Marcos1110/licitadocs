@@ -5,88 +5,118 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\Documento;
+use App\Models\Envio;
 use App\Models\Processo;
-use App\Models\TiposDocumento;
-use App\Models\User;
-use App\Notifications\ReceivedDocumentNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DocumentosController extends Controller
 {
-    public function index(){
-      # Mostra a view do formulário para upload de arquivos
-      # Carrega os usuários(exceto o atual), tipos e processos para serem mostrados nos campos do formulário. 
-      $destinatarios = User::where('id', '!=', Auth::id())->get();
-      $tiposDocumento = TiposDocumento::all();
+    public function mostrarFormulario()
+    {
       $processos = Processo::all();
 
+      return view('documentos.formulario', compact('processos'));
+    }
 
-      return view('documentos.uploadForm', compact('destinatarios', 'tiposDocumento', 'processos'));
-  }
-
-    public function store(Request $request)
+    public function documentosRecebidos()
     {
-        #Salva o arquivo no banco 
-        $request->validate([
+      $envios = Envio::where('destinatario', Auth::user()->id)->get();
+      $documentos = Documento::whereIn('id', $envios->pluck('documento'))->get();
+
+      return view('documentos.recebidos', compact('documentos'));
+    }
+
+    public function salvarDocumento(Request $request)
+    {
+        $request->validate(
+        [
             'arquivo' => 'required|file|mimes:pdf|max:10240',
         ]);
 
         if ($request->hasFile('arquivo')) {
-            
-            $file = $request->file('arquivo');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $arquivo = $request->file('arquivo');
+            $novoNome = time() . '_' . $arquivo->getClientOriginalName();
 
-            $path = $file->storeAs('public/documentos', $filename);
+            $caminho = $arquivo->storeAs('public/documentos', $novoNome);
 
-            # Ajusta o valor de precisaAssinar para false caso não seja marcado
-            $precisaAssinar = $request->has('precisaAssinar') ? true : false;
-
-            # Salva os dados do arquivo no banco de dados
             $documento = new Documento();
             $documento->titulo = $request->input('titulo');
             $documento->descricao = $request->input('descricao');
-            $documento->tipo = $request->input('tipoDocumento');
-            $documento->processo = $request->input('processo'); 
-            $documento->precisaAssinar = $precisaAssinar;
-            $documento->assinado = false;
-            $documento->arquivo = $path;
-            $documento->remetente = Auth::user()->id;
-            $documento->destinatario = $request->input('destinatario');
+            $documento->processo = $request->input('processo');
+            $documento->responsavel = Auth::user()->id;
+            $documento->arquivo = $caminho;
             $documento->save();
 
-            $this->notificarDesinatario($documento);
-
-            return back()->with('success', 'Arquivo enviado com sucesso!')->with('path', $path);
+            return back()->with('success', 'Arquivo salvo com sucesso!');
         }
-        return back()->with('error', 'Erro ao enviar o arquivo.');
+
+        return back()->with('error', 'Erro ao salvar o arquivo.');
     }
 
-    public function notificarDesinatario($documento){
-
-        $destinatario = User::find($documento->destinatario);
-        $remetente = User::find($documento->remetente);
-
-        $destinatario->notify(new ReceivedDocumentNotification($documento, $destinatario, $remetente));
-    }
-
-    public function viewer($id){
+    public function detalhesDocumento($id){
         $documento = Documento::findOrFail($id);
-        if (auth()->user()->id == $documento->destinatario || auth()->user()->id == $documento->remetente) {
-            $pdfPath = Storage::disk('public')->path($documento->arquivo);
-            return view('documentos.viewer', compact('pdfPath', 'documento'));
-        } else {
-            return redirect()->back()->with('error', 'Você não tem permissão para visualizar este documento.');
-        }
+        $envio = Envio::where('documento', $documento->id)->get();
+        $pdfPath = Storage::disk('public')->path($documento->arquivo);
+        return view('documentos.viewer', compact('pdfPath', 'documento', 'envio'));
     }
 
     public function show($id)
     {
-        $documento = Documento::findOrFail($id); 
-
-        return response()->file(storage_path('app/' . $documento->arquivo));
+        $documento = Documento::findOrFail($id);
+        $localizacao = storage_path('app/' . $documento->arquivo);
+        return response()->file($localizacao);
     }
 
+    public function download($id)
+    {
+        $documento = Documento::findOrFail($id);
+        $path = storage_path('app/public/' . $documento->arquivo);
+        return response()->download($path);
+    }
+
+    public function editarDocumento($id)
+    {
+        $documento = Documento::findOrFail($id);
+        $processos = Processo::all();
+
+        return view('documentos.editar', compact('documento', 'processos'));
+    }
+
+    public function atualizarDocumento(Request $request, $id)
+    {
+        $request->validate(
+        [
+            'arquivo' => 'file|mimes:pdf|max:10240',
+        ]);
+    
+        $documento = Documento::findOrFail($id);
+        $documento->titulo = $request->input('titulo');
+        $documento->descricao = $request->input('descricao');
+        $documento->processo = $request->input('processo');
+    
+        if ($request->hasFile('arquivo')) {
+            $arquivo = $request->file('arquivo');
+            $novoNome = time() . '_' . $arquivo->getClientOriginalName();
+
+            $caminho = $arquivo->storeAs('public/documentos', $novoNome);
+
+            $caminho = $arquivo->storeAs('public/documentos', $novoNome);
+            $documento->arquivo = $caminho;
+        }
+    
+        $documento->save();
+    
+        return back()->with('success', 'Documento atualizado com sucesso!');
+    }
+
+    public function excluirDocumento($id)
+    {
+        $documento = Documento::findOrFail($id);
+        $documento->delete();
+
+        return redirect()->route('usuario.dashboard')->with('success', 'Documento excluído com sucesso!');
+    }
 }
 
 

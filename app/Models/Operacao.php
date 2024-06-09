@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Modalidade extends Model
+class Operacao extends Model
 {
     use HasFactory;
 
@@ -15,8 +15,8 @@ class Modalidade extends Model
     ];
     
     # Relacionamentos
-    public function processo(): HasMany
+    public function log(): HasMany
     {
-        return $this->hasMany(Processo::class);
+        return $this->hasMany(Log::class);
     }
 }
